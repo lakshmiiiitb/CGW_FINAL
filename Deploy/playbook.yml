@@ -1,0 +1,23 @@
+---
+- name: Deploy spring and sql containers
+  hosts: all
+  tasks:      
+    - name: Copy Docker compose file to destination
+      copy:
+          src: ../docker-compose.yml
+          dest: .
+     
+    - name: Copy Docker file to destination
+      copy:
+          src: ../Dockerfile
+          dest: .
+          
+    - name: Execute docker compose
+      docker_compose:
+       project_src: .
+       state: present
+      register: dockercompose
+     
+    - name: Container info
+      debug:
+        var: dockercompose
