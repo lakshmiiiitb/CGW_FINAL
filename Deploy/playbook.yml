@@ -1,6 +1,6 @@
 ---
 - name: Deploy spring and sql containers
-  hosts: all
+  hosts: localhost
   tasks:      
     - name: Copy Docker compose file to destination
       copy:

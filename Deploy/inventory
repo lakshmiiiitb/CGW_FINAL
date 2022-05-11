@@ -1,2 +1,2 @@
 [localhost]
-localhost ansible_user = lakshmi
+172.16.145.21 ansible_user = lakshmi
