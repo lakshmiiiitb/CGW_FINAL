@@ -4,6 +4,8 @@ import com.example.cgw.Helper.JwtUtil;
 import com.example.cgw.JPAData.*;
 import com.example.cgw.Service.CustomUserDetailsService;
 import com.example.cgw.dao.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 public class Pages {
+    private static final Logger logger = LogManager.getLogger(Pages.class);
 
     public static String roleentered=null;
     public static int customerid=-1;
@@ -54,6 +57,7 @@ public class Pages {
     @PostMapping("/authenticate")
     public ResponseEntity<?> generate(@RequestBody JWTRequest login) throws Exception {
         String append="";
+        logger.info("---Authenticating user---");
         try
         {
             System.out.println("login "+login);
@@ -79,6 +83,7 @@ public class Pages {
         }
         catch (Exception e)
         {
+            logger.error("Auhtentication failed , reason "+e);
             System.out.println(e);
             throw new Exception("Bad credentials");
         }
@@ -93,6 +98,7 @@ public class Pages {
     @PostMapping(path = "/register/partner")
     public Partner partner(@RequestBody Partner p) {
 
+        logger.info("---Registering partner---");
         System.out.println("entered");
         System.out.println(p);
         p.setPassword(bCryptPasswordEncoder.encode(p.getPassword()));
@@ -108,6 +114,7 @@ public class Pages {
 
     @PostMapping(path = "/register/customer")
     public Customer customer(@RequestBody Customer c) {
+        logger.info("---Registering customer---");
         System.out.println("entered customer");
         System.out.println(c);
         c.setPassword(bCryptPasswordEncoder.encode(c.getPassword()));
@@ -121,6 +128,7 @@ public class Pages {
 
     @PostMapping(path = "/register/delivery")
     public Delivery delivery(@RequestBody Delivery d) {
+        logger.info("---Registering delivery---");
         System.out.println(d);
         d.setPassword(bCryptPasswordEncoder.encode(d.getPassword()));
         System.out.println(d);
@@ -135,6 +143,7 @@ public class Pages {
    @PostMapping(path = "/addDistance")
     public DistanceBetweenAreas addDistance(@RequestBody  DistanceBetweenAreas distance)
     {
+        logger.info("---Distance between "+distance.getFromLocation()+" "+distance.getToLocation()+" is "+distance.getDist()+" ---");
         distanceBetweenAreasRepo.save(distance);
         return distance;
     }

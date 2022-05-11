@@ -6,6 +6,8 @@ import com.example.cgw.JPAData.Partner;
 import com.example.cgw.dao.ItemsRepo;
 import com.example.cgw.dao.OrdersRepo;
 import com.example.cgw.dao.PartnerRepo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ public class Partner_pages {
     @Autowired
     ItemsRepo itemsRepo;
 
+    private static final Logger logger = LogManager.getLogger(Pages.class);
+
     @GetMapping("/partner/{id}")
     public Partner getPartner(@PathVariable("id") int id)
     {
@@ -37,6 +41,7 @@ public class Partner_pages {
     @GetMapping ("/partner/inventory/{id}")
     public List<Items> viewInventory(@PathVariable("id") int id)
     {
+        logger.info("--View inventory to partner---");
         System.out.println("Inventory");
         Partner p=partnerRepo.findById(id);
         List<Items> items=itemsRepo.findAllByPartner(p);
@@ -48,8 +53,10 @@ public class Partner_pages {
     @GetMapping ("/partner/orders/{id}")
     public List<Orders> viewOrders(@PathVariable("id") int id)
     {
+
        System.out.println("partner orders");
        Partner p=partnerRepo.findById(id);
+        logger.info("---View orders for partner "+p.getStoreName()+" ---");
        List<Orders> orders=ordersRepo.findAllByPartner(p);
        return orders;
 

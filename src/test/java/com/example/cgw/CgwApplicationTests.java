@@ -16,6 +16,6 @@ class CgwApplicationTests {
     CustomerRepo customerRepo;
     @Test
     void contextLoads() {
-        Assert.assertEquals(null,customerRepo.findById(1));
+
     }
 }

@@ -95,9 +95,12 @@ public class CustomerPages {
     @GetMapping(path = "/customer/addorders/{cartid}/{addid}/{shopid}/{qty}")
     public String addOrders(@PathVariable("cartid") int cartid,@PathVariable("shopid") int shopid, @PathVariable("addid") int addid, @PathVariable("qty") int qty)
     {
+        logger.info("---Add orders---");
+
         Cart cart= cartRepo.findById(cartid);
         Partner partner=partnerRepo.findById(shopid);
         Address address=addressRepo.findById(addid);
+        logger.info("Orders : Item: "+cart.getItem_name()+" Store: "+partner.getStoreName()+" To: "+address.getName()+" From: "+cart.getCustomer().getName());
         Items items=itemsRepo.findByShopAndItemName(partner, cart.getItem_name());
 
         if(items!=null)
@@ -114,13 +117,17 @@ public class CustomerPages {
             ordersRepo.save(o);
             cartRepo.delete(cart);
         }
+        else
+            logger.error("Error  in order");
         return "done";
     }
 
     @GetMapping(path = "/customer/viewcart/{id}")
     public List<Cart> viewCart(@PathVariable("id") int id)
     {
+        logger.info("---Display Cart---");
         List<Cart> carts=cartRepo.findByCustomer(customerRepo.findById(id));
+
         for(Cart c:carts)
             System.out.println(c);
         return carts;
@@ -129,9 +136,11 @@ public class CustomerPages {
     @GetMapping(path = "/customer/viewaddress/{id}")
     public List<Address> viewAddress(@PathVariable("id") int id)
     {
+        logger.info("---View address---");
         System.out.println(id);
         List<Address> addresses = addressRepo.findByCustomer(customerRepo.findById(id));
         System.out.println(addresses.size());
+
         for(Address c:addresses)
             System.out.println(c);
         return addresses;
@@ -140,6 +149,7 @@ public class CustomerPages {
     @GetMapping("/customer/item/{id}")
     public Cart getItem(@PathVariable("id") int id)
     {
+        logger.info("---Get Item in cart---");
         Items items=itemsRepo.findById(id);
         Cart cart=cartRepo.findByItemid(id);
 
@@ -149,6 +159,7 @@ public class CustomerPages {
     @GetMapping("address/{id}")
     public List<Address> getAddress(@PathVariable("id") int id)
     {
+        logger.info("---Get address ---");
         List<Address> address= addressRepo.findByCustomer(customerRepo.findById(id));
         return address;
     }
@@ -157,6 +168,7 @@ public class CustomerPages {
     @PostMapping("/customer/addAddress/{id}")
     public String addAddress(@PathVariable("id") int id, Address address)
     {
+        logger.info("---Adding address---");
         address.setCustomer(customerRepo.findById(id));
         addressRepo.save(address);
         return "done";
@@ -183,6 +195,7 @@ public class CustomerPages {
     @GetMapping(path = "/customer/{id}")
     public Customer getCustomer(@PathVariable("id") int id)
     {
+        logger.info("Get customer with id"+id);
         System.out.println("id= "+id);
         return customerRepo.findById(id);
     }
@@ -190,6 +203,7 @@ public class CustomerPages {
     @PostMapping(path = "/customer/addprofilephoto")
     public String  saveProfile(int custid,MultipartFile file)
     {
+
         //Partner partner=partnerRepo.findById(custid);
         Customer customer = customerRepo.findById(custid);
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -209,6 +223,7 @@ public class CustomerPages {
     @GetMapping ("/customer/inventory/{id}")
     public List<Items> viewInventoryToCustomer(@PathVariable("id") int id)
     {
+        logger.info("---View items in shop---");
         System.out.println("Inventory");
         Partner p=partnerRepo.findById(id);
         List<Items> items=itemsRepo.findAllByPartner(p);
@@ -220,11 +235,13 @@ public class CustomerPages {
     @GetMapping ("/customer/orders/{id}")
     public List<Orders> viewOrdersToCustomer(@PathVariable("id") int id)
     {
+        logger.info("---View orders to customer---");
         System.out.println("Orders");
         Customer customer=customerRepo.findById(id);
         List<Orders> orders= ordersRepo.findAllByCustomer(customer);
         for(Orders i : orders)
         {
+            logger.info(i.getCustomer().getUsername()+"   "+i.getItem_name()+"  "+i.getQty()+" "+i.getPrice());
             System.out.println(i.getCustomer().getUsername()+"   "+i.getItem_name()+"  "+i.getQty()+" "+i.getPrice());
         }
         return orders;
@@ -244,6 +261,7 @@ public class CustomerPages {
     @Transactional
     @GetMapping("/customer/validorder/{shopid}/{addressid}")
     int checkOrderValidity( @PathVariable("shopid")int shopid, @PathVariable("addressid")int addressid) throws TransactionRequiredException {
+        logger.info("---Check Order Validity---");
         Address address= addressRepo.findById(addressid);
         Partner partner=partnerRepo.findById(shopid);
         if(partner.getPincode().equals(address.getPincode()))

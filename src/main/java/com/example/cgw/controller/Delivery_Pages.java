@@ -2,6 +2,8 @@ package com.example.cgw.controller;
 
 import com.example.cgw.JPAData.*;
 import com.example.cgw.dao.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -34,6 +36,8 @@ public class Delivery_Pages {
     @Autowired
     OrdersRepo ordersRepo;
 
+    private static final Logger logger = LogManager.getLogger(Pages.class);
+
     @GetMapping("/delivery/{id}")
     public Delivery getDelivery(@PathVariable("id") int id)
     {
@@ -44,6 +48,7 @@ public class Delivery_Pages {
     @GetMapping("/delivery/viewordersatdeliverylocation/{pincode}")
     public List<Orders> viewOrdersAtDeliveryLocation(@PathVariable("pincode") String pincode)
     {
+        logger.info("---View orders at delivery boy's location---");
         List<Address> address=addressRepo.findByPincode(pincode);
         List<Orders> orders= new ArrayList<>();
         for(Address a:address)
@@ -57,7 +62,10 @@ public class Delivery_Pages {
         }
 
         for(Orders o:orders)
+        {
+            logger.info("Orders at location: "+o.getItem_name()+" "+o.getPartner().getStoreName());
             System.out.println(o);
+        }
 
         return orders;
     }
@@ -66,6 +74,7 @@ public class Delivery_Pages {
     @GetMapping("/delivery/viewpickedorders/{id}")
     public List<Orders> viewPickedOrders(@PathVariable("id") int id)
     {
+        logger.info("---View orders picked by delivery boy---");
         System.out.println("id= "+id);
         Delivery d=deliveryRepo.findById(id);
         System.out.println(d);
@@ -83,6 +92,7 @@ public class Delivery_Pages {
     @GetMapping("/delivery/viewdeliveredorders/{id}")
     public List<Orders> viewDeliveredOrders(@PathVariable("id") int id)
     {
+        logger.info("---view delivered orders---");
         Delivery d=deliveryRepo.findById(id);
         List<Orders> orders=ordersRepo.findAllByDelivery(d);
         List<Orders> result=new ArrayList<>();
@@ -98,6 +108,7 @@ public class Delivery_Pages {
     @GetMapping("/delivery/pickorders/{orderid}/{userid}")
     public String pickOrders(@PathVariable("orderid") int orderid, @PathVariable("userid") int userid)//orderid
     {
+        logger.info("---Order picked---");
         Orders o=ordersRepo.findById(orderid);
         o.setStatus('p');
         o.setDelivery(deliveryRepo.findById(userid));
@@ -108,6 +119,7 @@ public class Delivery_Pages {
     @GetMapping("/delivery/deliverIt/{id}")
     public String deliverIt(@PathVariable("id") int id)//orderid
     {
+        logger.info("---Order delivered---");
         Orders o=ordersRepo.findById(id);
         o.setStatus('d');
         ordersRepo.save(o);
