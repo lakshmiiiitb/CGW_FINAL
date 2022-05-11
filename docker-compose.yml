@@ -3,6 +3,7 @@ services:
   springboot-app:
     container_name: spring_app_backend
     image: lakshmihegdeiiitb/spring
+    restart: always
     ports:
       - 9088:9087
     environment:
@@ -11,17 +12,13 @@ services:
       MYSQL_HOST: mysqldatabase
       MYSQL_PORT: 3306
 
-
-    volumes:
-      - /home/lakshmi/Desktop/DB:/var/lib/mysql
-    restart: always
-
-
   mysql_service:
     container_name: mysqldatabase
     image: mysql
     ports:
       - 3308:3306
+    volumes:
+      - /home/lakshmi/Documents/Database :/var/lib/mysql
     environment:
       MYSQL_DATABASE: GiftDB
       MYSQL_ROOT_PASSWORD : root
