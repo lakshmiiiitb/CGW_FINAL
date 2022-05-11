@@ -22,3 +22,11 @@ services:
     environment:
       MYSQL_DATABASE: GiftDB
       MYSQL_ROOT_PASSWORD : root
+  
+  react_app:
+    container_name: react_app_frontend
+    image: lakshmihegdeiiitb/react
+    restart: always
+    ports: 
+      - 3001:3000
+      
